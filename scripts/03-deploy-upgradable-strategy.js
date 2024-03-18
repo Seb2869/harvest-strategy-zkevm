@@ -1,6 +1,4 @@
 const prompt = require('prompt');
-const hre = require("hardhat");
-const { type2Transaction } = require('./utils.js');
 
 async function main() {
   console.log("Upgradable strategy deployment.");
@@ -8,22 +6,22 @@ async function main() {
   prompt.start();
   const addresses = require("../test/test-config.js");
 
-  const {id, vaultAddr, strategyName} = await prompt.get(['vaultAddr', 'strategyName']);
+  const {vaultAddr, strategyName} = await prompt.get(['vaultAddr', 'strategyName']);
 
   const StrategyImpl = artifacts.require(strategyName);
-  const impl = await type2Transaction(StrategyImpl.new);
+  const impl = StrategyImpl.new();
 
-  console.log("Implementation deployed at:", impl.creates);
+  console.log("Implementation deployed at:", impl.address);
 
   const StrategyProxy = artifacts.require('StrategyProxy');
-  const proxy = await type2Transaction(StrategyProxy.new, impl.creates);
+  const proxy = await StrategyProxy.new(impl.address);
 
-  console.log("Proxy deployed at:", proxy.creates);
+  console.log("Proxy deployed at:", proxy.address);
 
-  const strategy = await StrategyImpl.at(proxy.creates);
-  await type2Transaction(strategy.initializeStrategy, addresses.Storage, vaultAddr);
+  const strategy = await StrategyImpl.at(proxy.address);
+  await strategy.initializeStrategy(addresses.Storage, vaultAddr);
 
-  console.log("Deployment complete. New strategy deployed and initialised at", proxy.creates);
+  console.log("Deployment complete. New strategy deployed and initialised at", proxy.address);
 }
 
 main()

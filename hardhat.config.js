@@ -20,12 +20,12 @@ module.exports = {
       },
       chainId: 1101,
       forking: {
-        url: `https://zkevm-rpc.com`,
+        url: `https://polygonzkevm-mainnet.g.alchemy.com/v2/${secret.alchemyKey}`,
         // blockNumber: 79985280, // <-- edit here
       },
     },
     mainnet: {
-      url: `https://zkevm-rpc.com`,
+      url: `https://polygonzkevm-mainnet.g.alchemy.com/v2/${secret.alchemyKey}`,
       accounts: {
         mnemonic: secret.mnemonic,
       },
@@ -38,7 +38,7 @@ module.exports = {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 200,
+            runs: 1,
           },
         },
       },
